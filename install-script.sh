@@ -14,7 +14,17 @@ set -e
 #
 # VS Code:
 # --- Configure sync: https://code.visualstudio.com/docs/editor/settings-sync
-
+#
+# Chrome
+# --- Download dir: /tmp
+#
+# Install Ant theme from
+# https://github.com/EliverLara/Ant/releases/download/v1.3.0/Ant.tar
+# in /usr/share/themes then
+# --- gsettings set org.gnome.desktop.interface gtk-theme "Ant"
+# --- gsettings set org.gnome.desktop.wm.preferences theme "Ant"
+#
+# Activate nvidia graphics driver
 
 
 # Initial upgrade
@@ -36,6 +46,7 @@ apt-get install -y curl
 apt-get install -y gparted
 apt-get install -y docker.io
 apt-get install -y gimp
+apt install gnome-shell-extensions
 
 # Spotify
 curl -sS https://download.spotify.com/debian/pubkey.gpg | sudo apt-key add - 
@@ -80,6 +91,8 @@ bash /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /srv/conda
 echo -e '# Miniconda initialization' >> ~/.bashrc
 echo -e 'eval "$('/srv/conda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"' >> ~/.bashrc
 echo -e '. "/srv/conda/etc/profile.d/conda.sh"' >> ~/.bashrc
+chown -R 1000:1000 /srv/conda
+chown -R 1000:1000 ~/.conda
 
 # Final upgrade
 rm ./*.deb
@@ -103,7 +116,23 @@ gsettings set org.gnome.nautilus.desktop volumes-visible false
 gsettings set org.gnome.gnome-screenshot auto-save-directory "/tmp"
 # Default applications in dock 
 gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'google-chrome.desktop', 'code_code.desktop', 'gnome-control-center.desktop', 'libreoffice-writer.desktop', 'libreoffice-calc.desktop']"
+# Default to minimize
+gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize-or-overview'
+# Lock screen color
+sudo sed -i "s/background: #2c001e/background: #3e8585/g" /usr/share/gnome-shell/theme/ubuntu.css
+# Splach screen color
+sudo sed -i "s/Window.SetBackgroundTopColor (0.16, 0.00, 0.12);/Window.SetBackgroundTopColor (0.243, 0.522, 0.522);/g" /usr/share/plymouth/themes/ubuntu-logo/ubuntu-logo.script
+sudo sed -i "s/Window.SetBackgroundBottomColor (0.16, 0.00, 0.12);/Window.SetBackgroundBottomColor (0.243, 0.522, 0.522);/g" /usr/share/plymouth/themes/ubuntu-logo/ubuntu-logo.script
+sudo update-initramfs -u
+# Icon packages
+git clone https://github.com/vinceliuice/Tela-icon-theme.git
+cd Tela-icon-theme/
+./install.sh
+cd ..
+rm -fr Tela-icon-theme/
 
+# Install all google fonts
+bash install-google-fonts.sh
 
 # Git configuration
 git config --global user.name "Valentin Biasi"
@@ -112,7 +141,7 @@ git config --global core.editor nano
 git config --global color.ui true
 
 # ssh key
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -q -P ""
+ssh-keygen -t rsa -b 4096 -q -P ""
 
 # Docker config
 groupadd docker || true
