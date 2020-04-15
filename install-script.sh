@@ -94,6 +94,23 @@ echo -e '. "/srv/conda/etc/profile.d/conda.sh"' >> ~/.bashrc
 chown -R 1000:1000 /srv/conda
 chown -R 1000:1000 ~/.conda
 
+# Azure CLI
+apt install -y ca-certificates curl apt-transport-https lsb-release gnupg
+curl -sL https://packages.microsoft.com/keys/microsoft.asc |
+    gpg --dearmor |
+    sudo tee /etc/apt/trusted.gpg.d/microsoft.asc.gpg > /dev/null
+AZ_REPO=$(lsb_release -cs)
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO main" |
+    sudo tee /etc/apt/sources.list.d/azure-cli.list
+apt update
+apt install -y azure-cli
+az login
+
+# Steelseries Rival 100 driver
+sudo apt install -y build-essential python-dev libusb-1.0-0-dev libudev-dev
+pip install rivalcfg
+sudo /srv/conda/bin/rivalcfg -c '#3c8585'
+
 # Final upgrade
 rm ./*.deb
 apt update
