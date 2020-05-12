@@ -109,7 +109,7 @@ az login
 # Steelseries Rival 100 driver
 sudo apt install -y build-essential python-dev libusb-1.0-0-dev libudev-dev
 pip install rivalcfg
-sudo /srv/conda/bin/rivalcfg -c '#3c8585'
+sudo /srv/conda/bin/rivalcfg -c '#AA0505'
 
 # Final upgrade
 rm ./*.deb
@@ -136,10 +136,10 @@ gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'org
 # Default to minimize
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize-or-overview'
 # Lock screen color
-sudo sed -i "s/background: #2c001e/background: #3e8585/g" /usr/share/gnome-shell/theme/ubuntu.css
+sudo sed -i "s/background: #2c001e/background: #E74C3C/g" /usr/share/gnome-shell/theme/ubuntu.css
 # Splach screen color
-sudo sed -i "s/Window.SetBackgroundTopColor (0.16, 0.00, 0.12);/Window.SetBackgroundTopColor (0.243, 0.522, 0.522);/g" /usr/share/plymouth/themes/ubuntu-logo/ubuntu-logo.script
-sudo sed -i "s/Window.SetBackgroundBottomColor (0.16, 0.00, 0.12);/Window.SetBackgroundBottomColor (0.243, 0.522, 0.522);/g" /usr/share/plymouth/themes/ubuntu-logo/ubuntu-logo.script
+sudo sed -i "s/Window.SetBackgroundTopColor (0.16, 0.298, 0.235);/Window.SetBackgroundTopColor (0.906, 0.522, 0.522);/g" /usr/share/plymouth/themes/ubuntu-logo/ubuntu-logo.script
+sudo sed -i "s/Window.SetBackgroundBottomColor (0.16, 0.298, 0.235);/Window.SetBackgroundBottomColor (0.90676/, 0.522, 0.522);/g" /usr/share/plymouth/themes/ubuntu-logo/ubuntu-logo.script
 sudo update-initramfs -u
 # Icon packages
 git clone https://github.com/vinceliuice/Tela-icon-theme.git

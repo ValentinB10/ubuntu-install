@@ -20,8 +20,11 @@ sudo mkdir -p /usr/share/fonts/truetype/$_gf
 echo "Installing all .ttf fonts in /usr/share/fonts/truetype/$_gf"
 find $PWD/fonts-master/ -name "*.ttf" -exec sudo install -m644 {} /usr/share/fonts/truetype/google-fonts/ \; || return 1
 
+echo "Modifying permission"
+find /usr/share/fonts -type f -exec sudo chmod 644 {}
+
 echo "Updating the font cache"
-fc-cache -f > /dev/null
+fc-cache -r > /dev/null
 
 # clean up, but only the .tar.gz, the user may need the folder
 rm -f $_gf.tar.gz
