@@ -33,7 +33,7 @@ apt full-upgrade -y
 apt autoremove -y
 
 # Add apt repos
-add-apt-repository -y ppa:otto-kesselgulasch/gimp
+# add-apt-repository -y ppa:otto-kesselgulasch/gimp
 add-apt-repository -y ppa:libreoffice/ppa
 apt update
 
@@ -109,13 +109,18 @@ az login
 # Steelseries Rival 100 driver
 sudo apt install -y build-essential python-dev libusb-1.0-0-dev libudev-dev
 pip install rivalcfg
-sudo /srv/conda/bin/rivalcfg -c '#AA0505'
+#sudo /srv/conda/bin/rivalcfg -c '#AA0505'
 
 # Final upgrade
 rm ./*.deb
 apt update
 apt full-upgrade -y
 apt autoremove -y
+
+# Ubuntu 20.04 change login color
+sudo apt install git libglib2.0-dev
+git clone https://github.com/PRATAP-KUMAR/focalgdm3.git
+sudo ./focalgdm3/focalgdm3 --set
 
 # Alt+Tab
 gsettings set org.gnome.desktop.wm.keybindings switch-windows "['<Alt>Tab']"
