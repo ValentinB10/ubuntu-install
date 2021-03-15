@@ -104,6 +104,9 @@ git clone https://github.com/AdnanHodzic/displaylink-debian.git
 cd displaylink-debian
 ./displaylink-debian.sh
 
+# Webcam configuration
+apt install v4l-utils pkg-config libcairo2-dev libgirepository1.0-dev
+pip install camset
 
 # Steelseries Rival 100 driver
 sudo apt install -y build-essential python-dev libusb-1.0-0-dev libudev-dev
