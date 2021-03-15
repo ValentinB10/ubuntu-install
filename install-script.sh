@@ -47,26 +47,20 @@ apt-get install -y gparted
 apt-get install -y docker.io
 apt-get install -y gimp
 apt install gnome-shell-extensions
+apt install peek
 
 # Spotify
-curl -sS https://download.spotify.com/debian/pubkey.gpg | sudo apt-key add - 
+curl -sS https://download.spotify.com/debian/pubkey_0D811D58.gpg | sudo apt-key add - 
 echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
 apt update && apt install spotify-client
 
-# Terraform
-TER_VER=`curl -s https://api.github.com/repos/hashicorp/terraform/releases/latest | grep tag_name | cut -d: -f2 | tr -d \"\,\v | awk '{$1=$1};1'`
-wget https://releases.hashicorp.com/terraform/${TER_VER}/terraform_${TER_VER}_linux_amd64.zip
-unzip terraform_${TER_VER}_linux_amd64.zip
-sudo mv terraform /usr/local/bin/
-rm terraform_${TER_VER}_linux_amd64.zip
-
 # VS code insiders
 wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
-add-apt-repository "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main"
-apt update && apt install -y code-insiders
+echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" | sudo tee /etc/apt/sources.list.d/vscode.list
+apt update && apt install -y code
 
 # Slack
-wget https://downloads.slack-edge.com/linux_releases/slack-desktop-4.0.2-amd64.deb
+wget https://downloads.slack-edge.com/linux_releases/slack-desktop-4.13.0-amd64.deb
 apt install -y ./slack-desktop-*.deb
 rm ./slack-desktop-*.deb
 
@@ -77,9 +71,10 @@ apt install -y ./keybase_amd64.deb
 # Discord
 snap install discord --classic
 
-# Libre office
-apt install -y libreoffice libreoffice-l10n-fr libreoffice-style-breeze
-apt install -y libreoffice-style-elementary libreoffice-style-oxygen libreoffice-style-human  openclipart-libreoffice
+# Free office
+wget https://www.softmaker.net/down/softmaker-freeoffice-2018_982-01_amd64.deb
+apt install ./softmaker-freeoffice-2018_982-01_amd64.deb
+/usr/share/freeoffice2018/add_apt_repo.sh
 
 # Chrome
 wget -N -P /tmp https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
@@ -88,9 +83,7 @@ apt install /tmp/google-chrome-stable_current_amd64.deb
 # Miniconda
 wget -N -P /tmp https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /srv/conda
-echo -e '# Miniconda initialization' >> ~/.bashrc
-echo -e 'eval "$('/srv/conda/bin/conda' 'shell.bash' 'hook' 2> /dev/null)"' >> ~/.bashrc
-echo -e '. "/srv/conda/etc/profile.d/conda.sh"' >> ~/.bashrc
+/srv/conda/bin/conda init
 chown -R 1000:1000 /srv/conda
 chown -R 1000:1000 ~/.conda
 
@@ -105,6 +98,12 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO 
 apt update
 apt install -y azure-cli
 az login
+
+# DisplayLink
+git clone https://github.com/AdnanHodzic/displaylink-debian.git
+cd displaylink-debian
+./displaylink-debian.sh
+
 
 # Steelseries Rival 100 driver
 sudo apt install -y build-essential python-dev libusb-1.0-0-dev libudev-dev
@@ -137,7 +136,7 @@ gsettings set org.gnome.nautilus.desktop volumes-visible false
 # Screenshot directory to /tmp
 gsettings set org.gnome.gnome-screenshot auto-save-directory "/tmp"
 # Default applications in dock 
-gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'google-chrome.desktop', 'code_code.desktop', 'gnome-control-center.desktop', 'libreoffice-writer.desktop', 'libreoffice-calc.desktop']"
+gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'google-chrome.desktop', 'spotify.desktop', 'code.desktop', 'gnome-control-center.desktop']"
 # Default to minimize
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize-or-overview'
 # Lock screen color
@@ -146,12 +145,6 @@ sudo sed -i "s/background: #2c001e/background: #E74C3C/g" /usr/share/gnome-shell
 sudo sed -i "s/Window.SetBackgroundTopColor (0.16, 0.298, 0.235);/Window.SetBackgroundTopColor (0.906, 0.522, 0.522);/g" /usr/share/plymouth/themes/ubuntu-logo/ubuntu-logo.script
 sudo sed -i "s/Window.SetBackgroundBottomColor (0.16, 0.298, 0.235);/Window.SetBackgroundBottomColor (0.90676/, 0.522, 0.522);/g" /usr/share/plymouth/themes/ubuntu-logo/ubuntu-logo.script
 sudo update-initramfs -u
-# Icon packages
-git clone https://github.com/vinceliuice/Tela-icon-theme.git
-cd Tela-icon-theme/
-./install.sh
-cd ..
-rm -fr Tela-icon-theme/
 
 # Install all google fonts
 bash install-google-fonts.sh
@@ -169,4 +162,18 @@ ssh-keygen -t rsa -b 4096 -q -P ""
 groupadd docker || true
 usermod -aG docker $USER || true
 newgrp docker || true
+
+
+# Theme
+apt install sassc optipng libglib2.0-dev-bin 
+git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git
+cd WhiteSur-gtk-theme
+
+# Icon packages
+git clone https://github.com/vinceliuice/Tela-icon-theme.git
+cd Tela-icon-theme/
+./install.sh
+cd ..
+rm -fr Tela-icon-theme/
+
 
