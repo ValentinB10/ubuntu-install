@@ -25,6 +25,12 @@ set -e
 # --- gsettings set org.gnome.desktop.wm.preferences theme "Ant"
 #
 # Activate nvidia graphics driver
+#
+# Extra gnome extensions
+# - https://extensions.gnome.org/extension/1056/gnome-shutdown-button/
+# - https://extensions.gnome.org/extension/2/move-clock/
+# - https://extensions.gnome.org/extension/708/panel-osd/
+# - https://extensions.gnome.org/extension/3037/good-bye-gdm-flick/
 
 
 # Initial upgrade
@@ -54,15 +60,14 @@ curl -sS https://download.spotify.com/debian/pubkey_0D811D58.gpg | sudo apt-key 
 echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
 apt update && apt install spotify-client
 
-# VS code insiders
+# VS code
 wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
 echo "deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main" | sudo tee /etc/apt/sources.list.d/vscode.list
 apt update && apt install -y code
 
 # Slack
-wget https://downloads.slack-edge.com/linux_releases/slack-desktop-4.13.0-amd64.deb
-apt install -y ./slack-desktop-*.deb
-rm ./slack-desktop-*.deb
+add-apt-repository "deb https://packagecloud.io/slacktechnologies/slack/debian jessie main"
+apt update && apt install -y slack-desktop
 
 # Keybase
 curl --remote-name https://prerelease.keybase.io/keybase_amd64.deb
@@ -77,15 +82,17 @@ apt install ./softmaker-freeoffice-2018_982-01_amd64.deb
 /usr/share/freeoffice2018/add_apt_repo.sh
 
 # Chrome
-wget -N -P /tmp https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-apt install /tmp/google-chrome-stable_current_amd64.deb
+sh -c 'echo "deb [arch=amd64] https://dl.google.com/linux/chrome/deb/ stable main" > /etc/apt/sources.list.d/google-chrome.list'
+wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add - apt-get update
+apt-get install google-chrome-stable
+ 
 
 # Miniconda
 wget -N -P /tmp https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
 bash /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /srv/conda
 /srv/conda/bin/conda init
-chown -R 1000:1000 /srv/conda
-chown -R 1000:1000 ~/.conda
+chown -R 1000:100 /srv/conda
+chown -R 1000:100 ~/.conda
 
 # Azure CLI
 apt install -y ca-certificates curl apt-transport-https lsb-release gnupg
@@ -98,6 +105,10 @@ echo "deb [arch=amd64] https://packages.microsoft.com/repos/azure-cli/ $AZ_REPO 
 apt update
 apt install -y azure-cli
 az login
+
+# Gitlab-runner
+curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
+sudo apt-get install gitlab-runner
 
 # DisplayLink
 git clone https://github.com/AdnanHodzic/displaylink-debian.git
@@ -139,15 +150,9 @@ gsettings set org.gnome.nautilus.desktop volumes-visible false
 # Screenshot directory to /tmp
 gsettings set org.gnome.gnome-screenshot auto-save-directory "/tmp"
 # Default applications in dock 
-gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'google-chrome.desktop', 'spotify.desktop', 'code.desktop', 'gnome-control-center.desktop']"
+gsettings set org.gnome.shell favorite-apps "['org.gnome.Nautilus.desktop', 'org.gnome.Terminal.desktop', 'google-chrome-beta.desktop', 'spotify.desktop', 'code.desktop', 'gnome-control-center.desktop']"
 # Default to minimize
 gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize-or-overview'
-# Lock screen color
-sudo sed -i "s/background: #2c001e/background: #E74C3C/g" /usr/share/gnome-shell/theme/ubuntu.css
-# Splach screen color
-sudo sed -i "s/Window.SetBackgroundTopColor (0.16, 0.298, 0.235);/Window.SetBackgroundTopColor (0.906, 0.522, 0.522);/g" /usr/share/plymouth/themes/ubuntu-logo/ubuntu-logo.script
-sudo sed -i "s/Window.SetBackgroundBottomColor (0.16, 0.298, 0.235);/Window.SetBackgroundBottomColor (0.90676/, 0.522, 0.522);/g" /usr/share/plymouth/themes/ubuntu-logo/ubuntu-logo.script
-sudo update-initramfs -u
 
 # Install all google fonts
 bash install-google-fonts.sh
@@ -171,12 +176,10 @@ newgrp docker || true
 apt install sassc optipng libglib2.0-dev-bin 
 git clone https://github.com/vinceliuice/WhiteSur-gtk-theme.git
 cd WhiteSur-gtk-theme
+sudo ./install.sh -s 220 -i ubuntu -N mojave
+sudo ./tweaks.sh -g
 
 # Icon packages
-git clone https://github.com/vinceliuice/Tela-icon-theme.git
-cd Tela-icon-theme/
-./install.sh
-cd ..
-rm -fr Tela-icon-theme/
-
-
+sudo add-apt-repository ppa:papirus/papirus
+sudo apt-get update
+sudo apt-get install papirus-icon-theme
